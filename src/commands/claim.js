@@ -43,7 +43,7 @@ module.exports = {
                 .setTitle("💎 Vous avez déjà le Lifetime !")
                 .setDescription("Vous avez tout ce qu'il vous faut, vous voulez quoi de + ?")
                 .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-                .setFooter({ text: "Developped by SixM" })
+                .setFooter({ text: "Developped by Kays / Zeu" })
                 .setTimestamp();
 
             message.reply({ embeds: [embed] });
@@ -55,7 +55,7 @@ module.exports = {
                 .setTitle("💰 Crédit Quotidien")
                 .setDescription(`Vous avez reçu **2 crédits** !\nVous avez maintenant **${balance + 2} crédits** en tout.`)
                 .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-                .setFooter({ text: "Developped by SixM" })
+                .setFooter({ text: "Developped by Kays / Zeu" })
                 .setTimestamp();
 
             message.reply({ embeds: [embed] });
@@ -66,7 +66,7 @@ module.exports = {
                 .setTitle("🚫 Réclamation de Crédit")
                 .setDescription("Vous avez déjà réclamé vos crédits aujourd'hui. Revenez demain pour en obtenir de nouveaux.")
                 .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-                .setFooter({ text: "Developped by SixM" })
+                .setFooter({ text: "Developped by Kays / Zeu" })
                 .setTimestamp();
 
             message.reply({ embeds: [embed] });
