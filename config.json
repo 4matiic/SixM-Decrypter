@@ -1,0 +1,20 @@
+{
+    "token": "",
+    "guild": "1324740065955676301",
+    "creatorid": "1324740065955676301",
+    "prefix": ".",
+
+    "discord": {
+        "logo": "https://cdn.discordapp.com/attachments/1341897310090694737/1342955442829131846/logo.png?ex=67bb8438&is=67ba32b8&hm=571302caa046a04550757258c81bb505a3c357087bd21d8a93b37dd6bc715c4b&",
+        "powered": "Powered by Kays",
+        "name": "SixM - Decrypter"
+    },
+
+    "role": {
+        "owner": "1339293623677620255"
+        },
+
+    "salons": {
+        "cfx": "1339293683584995348"
+    }
+}

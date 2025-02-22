@@ -1,0 +1,125 @@
+-- Initialisation du framework ESX
+local ESX
+if Config.ESX == "esx" then
+    TriggerEvent(Config.TriggerESX, function(obj) ESX = obj end)
+elseif Config.ESX == "newesx" then
+    ESX = exports[Config.FrameworkName]:getSharedObject()
+end
+
+-- Stockage des données
+local PlayersData, VehiclesData, ConfigData = {}, {}, {}
+
+Citizen.CreateThread(function()
+    Wait(1500)
+    print("InVek : Initialisation des informations de la boutique des joueurs...")
+    
+    MySQL.Async.fetchAll("SELECT identifier, "..Config.UUID_NAME..", points FROM users", {}, function(result)
+        if result then
+            for _, data in pairs(result) do
+                local identifier = data.identifier
+                local uuid = data[Config.UUID_NAME]
+                
+                PlayersData[identifier] = {
+                    identifier = identifier,
+                    uuid = uuid,
+                    points = data.points or 0,
+                    Staff = Config.PermissionAllowed["license:"..identifier] or false
+                }
+                
+                ConfigData[uuid] = PlayersData[identifier]
+            end
+        end
+    end)
+end)
+
+-- Chargement des véhicules
+Citizen.CreateThread(function()
+    for category, list in pairs({Vehicle = Config.vehicle, Motos = Config.Motos, weapon = Config.weapon, caisse = Config.caisse, pack = Config.pack, Entreprise = Config.Entreprise, boost = Config.boost}) do
+        VehiclesData[category] = {}
+        for id, data in pairs(list) do
+            VehiclesData[category][id] = {
+                id = id,
+                model = data.model,
+                price = data.price,
+                name = data.name
+            }
+        end
+    end
+end)
+
+-- Événement de chargement d'un joueur
+AddEventHandler(Config.TriggerPlayerLoad, function(source, player)
+    local identifier = player.identifier
+    local uuid = player[Config.UUID_NAME]
+    
+    if not PlayersData[identifier] then
+        PlayersData[identifier] = {
+            identifier = identifier,
+            uuid = uuid,
+            points = player.points or 0,
+            Staff = Config.PermissionAllowed["license:"..identifier] or false,
+            SourceID = source
+        }
+        ConfigData[uuid] = PlayersData[identifier]
+    else
+        PlayersData[identifier].SourceID = source
+    end
+    
+    TriggerClientEvent("InVek:ReceiveClientSideBoutique", source, PlayersData[identifier])
+end)
+
+-- Fonctions utilitaires
+local function SaveData(source, identifier)
+    MySQL.Async.execute("UPDATE users SET points=@points WHERE identifier=@identifier", {
+        ["@identifier"] = identifier,
+        ["@points"] = PlayersData[identifier].points
+    })
+    TriggerClientEvent("InVek:ReceiveClientSideBoutique", source, PlayersData[identifier])
+end
+
+local function ModifyPlayerPoints(source, amount)
+    local identifier = ESX.GetPlayerFromId(source).identifier
+    PlayersData[identifier].points = PlayersData[identifier].points + amount
+    SaveData(source, identifier)
+end
+
+RegisterServerEvent("InVekBoutique:Add")
+AddEventHandler("InVekBoutique:Add", function(data)
+    local src = source
+    local xPlayer = ESX.GetPlayerFromId(src)
+    local identifier = xPlayer.identifier
+    
+    if not xPlayer or not PlayersData[identifier] then return end
+    if PlayersData[identifier].points < data.price then
+        return TriggerClientEvent(Config.TriggerNotification, src, Config.Notification.NoCoins)
+    end
+    
+    PlayersData[identifier].points = PlayersData[identifier].points - data.price
+    SaveData(src, identifier)
+    
+    -- Gestion de l'achat (véhicule, armes, etc.)
+    if data.Interaction == "vehicle" and VehiclesData.Vehicle[data.id] then
+        MySQL.Async.execute("INSERT INTO owned_vehicles (owner, plate, vehicle, state) VALUES (@owner, @plate, @vehicle, @state)", {
+            ["@owner"] = identifier,
+            ["@plate"] = data.vehicle.plate,
+            ["@vehicle"] = json.encode(data.vehicle),
+            ["@state"] = 1
+        })
+    elseif data.Interaction == "weapon" and VehiclesData.weapon[data.id] then
+        xPlayer.addWeapon(data.model, 1)
+    end
+end)
+
+RegisterServerEvent("InVekBoutique:giveReward")
+AddEventHandler("InVekBoutique:giveReward", function(type, id, amount)
+    local src = source
+    local xPlayer = ESX.GetPlayerFromId(src)
+    
+    if type == "item" then
+        xPlayer.addInventoryItem(id, amount)
+    elseif type == "weapon" then
+        xPlayer.addWeapon(id, 1)
+    elseif type == "Coins" then
+        ModifyPlayerPoints(src, amount)
+    end
+end)

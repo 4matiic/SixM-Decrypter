@@ -1,0 +1,538 @@
+local L0_1, L1_1, L2_1, L3_1
+L0_1 = exports
+L0_1 = L0_1.es_extended
+L1_1 = L0_1
+L0_1 = L0_1.getSharedObject
+L0_1 = L0_1(L1_1)
+L1_1 = CreateThread
+function L2_1()
+  local L0_2, L1_2
+  L0_2 = GetCurrentResourceName
+  L0_2 = L0_2()
+  if "fb_bank" ~= L0_2 then
+    L0_2 = os
+    L0_2 = L0_2.exit
+    L0_2()
+  end
+end
+L1_1(L2_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:CreateAccount"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:CreateAccount"
+function L3_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2
+  L2_2 = source
+  L3_2 = L0_1.GetPlayerFromId
+  L4_2 = L2_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.fetchAll
+  L5_2 = "SELECT * FROM bank_accounts WHERE owner = @owner"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@owner"] = L7_2
+  function L7_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3, L5_3, L6_3
+    L1_3 = #A0_3
+    if L1_3 >= 3 then
+      L1_3 = TriggerClientEvent
+      L2_3 = "fb_bank:Notification"
+      L3_3 = L2_2
+      L4_3 = "~r~Navr\195\169, vous avez atteint le nombre maximum de comptes dans votre banque !"
+      L1_3(L2_3, L3_3, L4_3)
+    else
+      L1_3 = GenerateRandomIban
+      L1_3 = L1_3()
+      L2_3 = {}
+      L3_3 = A1_2
+      L2_3.name = L3_3
+      L2_3.iban = L1_3
+      L2_3.balance = 0
+      L3_3 = A0_2
+      L2_3.pin = L3_3
+      L3_3 = MySQL
+      L3_3 = L3_3.Async
+      L3_3 = L3_3.execute
+      L4_3 = "INSERT INTO bank_accounts (owner, balance, iban, pin, name) VALUES (@owner, @balance, @iban, @pin, @name)"
+      L5_3 = {}
+      L6_3 = L3_2.identifier
+      L5_3["@owner"] = L6_3
+      L6_3 = L2_3.balance
+      L5_3["@balance"] = L6_3
+      L6_3 = L2_3.iban
+      L5_3["@iban"] = L6_3
+      L6_3 = L2_3.pin
+      L5_3["@pin"] = L6_3
+      L6_3 = L2_3.name
+      L5_3["@name"] = L6_3
+      function L6_3(A0_4)
+        local L1_4, L2_4, L3_4, L4_4, L5_4, L6_4
+        if A0_4 then
+          L1_4 = TriggerClientEvent
+          L2_4 = "fb_bank:Notification"
+          L3_4 = L2_2
+          L4_4 = "~g~Compte Cr\195\169er avec succ\195\168s !"
+          L1_4(L2_4, L3_4, L4_4)
+          L1_4 = TriggerClientEvent
+          L2_4 = "fb_bank:CreateAccount"
+          L3_4 = L2_2
+          L4_4 = L2_3.name
+          L5_4 = L2_3.iban
+          L6_4 = L2_3.pin
+          L1_4(L2_4, L3_4, L4_4, L5_4, L6_4)
+        end
+      end
+      L3_3(L4_3, L5_3, L6_3)
+    end
+  end
+  L4_2(L5_2, L6_2, L7_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:CheckIban"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2
+  L3_2 = MySQL
+  L3_2 = L3_2.Async
+  L3_2 = L3_2.fetchAll
+  L4_2 = "SELECT * FROM bank_accounts WHERE iban = @iban"
+  L5_2 = {}
+  L5_2["@iban"] = A2_2
+  function L6_2(A0_3)
+    local L1_3, L2_3
+    L1_3 = A0_3[1]
+    if L1_3 then
+      L1_3 = A1_2
+      L2_3 = true
+      L1_3(L2_3)
+    else
+      L1_3 = A1_2
+      L2_3 = false
+      L1_3(L2_3)
+    end
+  end
+  L3_2(L4_2, L5_2, L6_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:Transfer"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:Transfer"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2
+  L3_2 = source
+  L4_2 = L0_1.GetPlayerFromId
+  L5_2 = L3_2
+  L4_2 = L4_2(L5_2)
+  if A0_2 == A2_2 then
+    L5_2 = TriggerClientEvent
+    L6_2 = "fb_bank:Notification"
+    L7_2 = L3_2
+    L8_2 = "~r~Navr\195\169, vous ne pouvez pas transferer sur votre propre compte !"
+    L5_2(L6_2, L7_2, L8_2)
+  end
+  L5_2 = MySQL
+  L5_2 = L5_2.Async
+  L5_2 = L5_2.fetchAll
+  L6_2 = "SELECT * FROM bank_accounts WHERE iban = @iban"
+  L7_2 = {}
+  L7_2["@iban"] = A0_2
+  function L8_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3
+    L1_3 = A0_3[1]
+    if L1_3 then
+      L1_3 = MySQL
+      L1_3 = L1_3.Async
+      L1_3 = L1_3.execute
+      L2_3 = "UPDATE bank_accounts SET balance = balance + @amount WHERE owner = @owner AND iban = @iban"
+      L3_3 = {}
+      L4_3 = A0_3[1]
+      L4_3 = L4_3.owner
+      L3_3["@owner"] = L4_3
+      L4_3 = A0_2
+      L3_3["@iban"] = L4_3
+      L4_3 = A1_2
+      L3_3["@amount"] = L4_3
+      function L4_3(A0_4)
+        local L1_4, L2_4, L3_4, L4_4
+        if A0_4 then
+          L1_4 = MySQL
+          L1_4 = L1_4.Async
+          L1_4 = L1_4.execute
+          L2_4 = "UPDATE bank_accounts SET balance = balance - @amount WHERE owner = @owner AND iban = @iban"
+          L3_4 = {}
+          L4_4 = L4_2.identifier
+          L3_4["@owner"] = L4_4
+          L4_4 = A2_2
+          L3_4["@iban"] = L4_4
+          L4_4 = A1_2
+          L3_4["@amount"] = L4_4
+          function L4_4(A0_5)
+            local L1_5, L2_5, L3_5, L4_5, L5_5
+            if A0_5 then
+              L1_5 = TriggerClientEvent
+              L2_5 = "fb_bank:Notification"
+              L3_5 = L3_2
+              L4_5 = "~g~Transfert effectuer !"
+              L1_5(L2_5, L3_5, L4_5)
+              L1_5 = TriggerEvent
+              L2_5 = "fb_bank:TransferNUI"
+              L3_5 = A1_2
+              L4_5 = A0_2
+              L5_5 = A2_2
+              L1_5(L2_5, L3_5, L4_5, L5_5)
+            end
+          end
+          L1_4(L2_4, L3_4, L4_4)
+        end
+      end
+      L1_3(L2_3, L3_3, L4_3)
+    end
+  end
+  L5_2(L6_2, L7_2, L8_2)
+end
+L1_1(L2_1, L3_1)
+function L1_1()
+  local L0_2, L1_2, L2_2, L3_2
+  L0_2 = "FB"
+  L1_2 = math
+  L1_2 = L1_2.random
+  L2_2 = 10000000
+  L3_2 = 99999999
+  L1_2 = L1_2(L2_2, L3_2)
+  L0_2 = L0_2 .. L1_2
+  return L0_2
+end
+GenerateRandomIban = L1_1
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:GetAccounts"
+function L3_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2
+  L2_2 = A0_2
+  L3_2 = L0_1.GetPlayerFromId
+  L4_2 = L2_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.fetchAll
+  L5_2 = "SELECT * FROM bank_accounts WHERE owner = @owner"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@owner"] = L7_2
+  function L7_2(A0_3)
+    local L1_3, L2_3
+    L1_3 = A1_2
+    L2_3 = A0_3
+    L1_3(L2_3)
+  end
+  L4_2(L5_2, L6_2, L7_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:Depot"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:Depot"
+function L3_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2
+  L2_2 = source
+  L3_2 = L0_1.GetPlayerFromId
+  L4_2 = L2_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.execute
+  L5_2 = "UPDATE bank_accounts SET balance = balance + @amount WHERE owner = @owner AND iban = @iban"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@owner"] = L7_2
+  L6_2["@iban"] = A1_2
+  L6_2["@amount"] = A0_2
+  function L7_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3, L5_3
+    if A0_3 then
+      L1_3 = TriggerClientEvent
+      L2_3 = "fb_bank:Notification"
+      L3_3 = L2_2
+      L4_3 = "~g~Depot effectuer !"
+      L1_3(L2_3, L3_3, L4_3)
+      L1_3 = TriggerClientEvent
+      L2_3 = "fb_bank:DepotNUI"
+      L3_3 = L2_2
+      L4_3 = A0_2
+      L5_3 = A1_2
+      L1_3(L2_3, L3_3, L4_3, L5_3)
+    end
+  end
+  L4_2(L5_2, L6_2, L7_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:Retrait"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:Retrait"
+function L3_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2
+  L2_2 = source
+  L3_2 = L0_1.GetPlayerFromId
+  L4_2 = L2_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.execute
+  L5_2 = "UPDATE bank_accounts SET balance = balance - @amount WHERE owner = @owner AND iban = @iban"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@owner"] = L7_2
+  L6_2["@iban"] = A1_2
+  L6_2["@amount"] = A0_2
+  function L7_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3, L5_3
+    if A0_3 then
+      L1_3 = L3_2.addMoney
+      L2_3 = A0_2
+      L1_3(L2_3)
+      L1_3 = TriggerClientEvent
+      L2_3 = "fb_bank:Notification"
+      L3_3 = L2_2
+      L4_3 = "~g~Retrait effectuer !"
+      L1_3(L2_3, L3_3, L4_3)
+      L1_3 = TriggerClientEvent
+      L2_3 = "fb_bank:RetraitNUI"
+      L3_3 = L2_2
+      L4_3 = A0_2
+      L5_3 = A1_2
+      L1_3(L2_3, L3_3, L4_3, L5_3)
+    end
+  end
+  L4_2(L5_2, L6_2, L7_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:RemoveItem"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:RemoveItem"
+function L3_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2, L5_2
+  L1_2 = source
+  L2_2 = L0_1.GetPlayerFromId
+  L3_2 = L1_2
+  L2_2 = L2_2(L3_2)
+  L3_2 = L2_2.removeInventoryItem
+  L4_2 = "money"
+  L5_2 = A0_2
+  L3_2(L4_2, L5_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:CheckAccountMoney"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2
+  L3_2 = A0_2
+  L4_2 = L0_1.GetPlayerFromId
+  L5_2 = L3_2
+  L4_2 = L4_2(L5_2)
+  L5_2 = MySQL
+  L5_2 = L5_2.Async
+  L5_2 = L5_2.fetchAll
+  L6_2 = "SELECT * FROM bank_accounts WHERE owner = @owner AND iban = @iban"
+  L7_2 = {}
+  L8_2 = L4_2.identifier
+  L7_2["@owner"] = L8_2
+  L7_2["@iban"] = A2_2
+  function L8_2(A0_3)
+    local L1_3, L2_3
+    if A0_3 then
+      L1_3 = A1_2
+      L2_3 = A0_3[1]
+      L2_3 = L2_3.balance
+      L1_3(L2_3)
+    end
+  end
+  L5_2(L6_2, L7_2, L8_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:checkIbanDisponibility"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2
+  L3_2 = MySQL
+  L3_2 = L3_2.Async
+  L3_2 = L3_2.fetchAll
+  L4_2 = "SELECT * FROM bank_accounts WHERE iban = @iban"
+  L5_2 = {}
+  L5_2["@iban"] = A2_2
+  function L6_2(A0_3)
+    local L1_3, L2_3
+    L1_3 = A0_3[1]
+    if L1_3 then
+      L1_3 = A1_2
+      L2_3 = false
+      L1_3(L2_3)
+    else
+      L1_3 = A1_2
+      L2_3 = true
+      L1_3(L2_3)
+    end
+  end
+  L3_2(L4_2, L5_2, L6_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:ChangeIban"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:ChangeIban"
+function L3_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2
+  L2_2 = source
+  L3_2 = L0_1.GetPlayerFromId
+  L4_2 = L2_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.execute
+  L5_2 = "UPDATE bank_accounts SET iban = @newiban WHERE owner = @owner AND iban = @iban"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@owner"] = L7_2
+  L6_2["@iban"] = A0_2
+  L6_2["@newiban"] = A1_2
+  L4_2(L5_2, L6_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:changePin"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2
+  L3_2 = A2_2.iban
+  L4_2 = A2_2.newpin
+  L5_2 = A0_2
+  L6_2 = L0_1.GetPlayerFromId
+  L7_2 = L5_2
+  L6_2 = L6_2(L7_2)
+  L7_2 = MySQL
+  L7_2 = L7_2.Async
+  L7_2 = L7_2.execute
+  L8_2 = "UPDATE bank_accounts SET pin = @newpin WHERE owner = @owner AND iban = @iban"
+  L9_2 = {}
+  L10_2 = L6_2.identifier
+  L9_2["@owner"] = L10_2
+  L9_2["@iban"] = L3_2
+  L9_2["@newpin"] = L4_2
+  function L10_2(A0_3)
+    local L1_3, L2_3
+    if A0_3 then
+      L1_3 = A1_2
+      L2_3 = true
+      L1_3(L2_3)
+    else
+      L1_3 = A1_2
+      L2_3 = false
+      L1_3(L2_3)
+    end
+  end
+  L7_2(L8_2, L9_2, L10_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:SendTransaction"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:SendTransaction"
+function L3_1(A0_2, A1_2, A2_2, A3_2, A4_2)
+  local L5_2, L6_2, L7_2, L8_2, L9_2
+  L5_2 = source
+  L6_2 = L0_1.GetPlayerFromId
+  L7_2 = L5_2
+  L6_2 = L6_2(L7_2)
+  L7_2 = MySQL
+  L7_2 = L7_2.Async
+  L7_2 = L7_2.execute
+  L8_2 = "INSERT INTO bank_transactions (iban, type, montant, date, time) VALUES (@iban, @type, @montant, @date, @time)"
+  L9_2 = {}
+  L9_2["@iban"] = A0_2
+  L9_2["@type"] = A1_2
+  L9_2["@montant"] = A2_2
+  L9_2["@date"] = A3_2
+  L9_2["@time"] = A4_2
+  L7_2(L8_2, L9_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = L0_1.RegisterServerCallback
+L2_1 = "fb_bank:getTransactions"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2
+  L3_2 = MySQL
+  L3_2 = L3_2.Async
+  L3_2 = L3_2.fetchAll
+  L4_2 = "SELECT * FROM bank_transactions WHERE iban = @iban"
+  L5_2 = {}
+  L5_2["@iban"] = A2_2
+  function L6_2(A0_3)
+    local L1_3, L2_3
+    if A0_3 then
+      L1_3 = A1_2
+      L2_3 = A0_3
+      L1_3(L2_3)
+    end
+  end
+  L3_2(L4_2, L5_2, L6_2)
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerEvent
+L2_1 = "fb_bank:CreateAccount2"
+L1_1(L2_1)
+L1_1 = AddEventHandler
+L2_1 = "fb_bank:CreateAccount2"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2
+  L3_2 = source
+  L4_2 = L0_1.GetPlayerFromId
+  L5_2 = L3_2
+  L4_2 = L4_2(L5_2)
+  L5_2 = {}
+  L5_2.iban = A1_2
+  L5_2.pin = A2_2
+  L5_2.name = A0_2
+  L6_2 = string
+  L6_2 = L6_2.format
+  L7_2 = [[
+IBAN: %s
+
+Nom de compte:
+%s]]
+  L8_2 = A1_2
+  L9_2 = A0_2
+  L6_2 = L6_2(L7_2, L8_2, L9_2)
+  L5_2.description = L6_2
+  L6_2 = exports
+  L6_2 = L6_2.ox_inventory
+  L7_2 = L6_2
+  L6_2 = L6_2.AddItem
+  L8_2 = L4_2.source
+  L9_2 = "cb"
+  L10_2 = 1
+  L11_2 = L5_2
+  L6_2 = L6_2(L7_2, L8_2, L9_2, L10_2, L11_2)
+  L7_2 = success
+  if L7_2 then
+    L7_2 = TriggerClientEvent
+    L8_2 = "fb_bank:Notification"
+    L9_2 = L4_2.source
+    L10_2 = "Vous venez de cr\195\169er votre carte bancaire, au compte ~w~"
+    L11_2 = A0_2
+    L12_2 = " ("
+    L13_2 = A1_2
+    L14_2 = ")."
+    L10_2 = L10_2 .. L11_2 .. L12_2 .. L13_2 .. L14_2
+    L7_2(L8_2, L9_2, L10_2)
+  end
+end
+L1_1(L2_1, L3_1)

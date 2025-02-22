@@ -1,0 +1,427 @@
+local L0_1, L1_1, L2_1
+L0_1 = Config
+L0_1 = L0_1.ESX
+if "esx" == L0_1 then
+  ESX = nil
+  L0_1 = TriggerEvent
+  L1_1 = Config
+  L1_1 = L1_1.TriggerESX
+  function L2_1(A0_2)
+    local L1_2
+    ESX = A0_2
+  end
+  L0_1(L1_1, L2_1)
+else
+  L0_1 = Config
+  L0_1 = L0_1.ESX
+  if "newesx" == L0_1 then
+    L0_1 = exports
+    L1_1 = Config
+    L1_1 = L1_1.FrameworkName
+    L0_1 = L0_1[L1_1]
+    L1_1 = L0_1
+    L0_1 = L0_1.getSharedObject
+    L0_1 = L0_1(L1_1)
+    ESX = L0_1
+  end
+end
+L0_1 = ESX
+L0_1 = L0_1.RegisterServerCallback
+L1_1 = "ArmePermCoffre:ReceiveWeapon"
+function L2_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2
+  L3_2 = {}
+  ListArme = L3_2
+  L3_2 = ESX
+  L3_2 = L3_2.GetPlayerFromId
+  L4_2 = A0_2
+  L3_2 = L3_2(L4_2)
+  L4_2 = MySQL
+  L4_2 = L4_2.Async
+  L4_2 = L4_2.fetchAll
+  L5_2 = "SELECT * FROM coffre_armeperm WHERE identifier = @identifier"
+  L6_2 = {}
+  L7_2 = L3_2.identifier
+  L6_2["@identifier"] = L7_2
+  function L7_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3, L5_3, L6_3, L7_3, L8_3, L9_3
+    L1_3 = pairs
+    L2_3 = A0_3
+    L1_3, L2_3, L3_3, L4_3 = L1_3(L2_3)
+    for L5_3, L6_3 in L1_3, L2_3, L3_3, L4_3 do
+      L7_3 = table
+      L7_3 = L7_3.insert
+      L8_3 = ListArme
+      L9_3 = L6_3
+      L7_3(L8_3, L9_3)
+    end
+    L1_3 = A1_2
+    L2_3 = {}
+    L3_3 = ListArme
+    L2_3.data1 = L3_3
+    L3_3 = ESX
+    L3_3 = L3_3.GetPlayerFromId
+    L4_3 = A0_2
+    L3_3 = L3_3(L4_3)
+    L3_3 = L3_3.loadout
+    L2_3.data2 = L3_3
+    L1_3(L2_3)
+  end
+  L4_2(L5_2, L6_2, L7_2)
+end
+L0_1(L1_1, L2_1)
+L0_1 = RegisterServerEvent
+L1_1 = "ArmePermCoffre:depositarmesperm"
+L0_1(L1_1)
+L0_1 = AddEventHandler
+L1_1 = "ArmePermCoffre:depositarmesperm"
+function L2_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2
+  L1_2 = source
+  L2_2 = ESX
+  L2_2 = L2_2.GetPlayerFromId
+  L3_2 = L1_2
+  L2_2 = L2_2(L3_2)
+  L3_2 = A0_2.arme
+  L4_2 = A0_2.action
+  L5_2 = A0_2.Ammo
+  L6_2 = A0_2.Label
+  L7_2 = A0_2.Name
+  L8_2 = A0_2.anticheat
+  if nil == L8_2 or true ~= L8_2 then
+    L9_2 = InVekServerUtils
+    L9_2 = L9_2.kickPlayer
+    L10_2 = L1_2
+    L11_2 = "D\195\169synchronisation avec le serveur ou detection de Cheat [Armes perm]"
+    L9_2(L10_2, L11_2)
+    return
+  end
+  if "deposit" == L4_2 then
+    L9_2 = 0
+    L10_2 = MySQL
+    L10_2 = L10_2.Async
+    L10_2 = L10_2.fetchAll
+    L11_2 = "SELECT * FROM coffre_armeperm WHERE identifier = @identifier"
+    L12_2 = {}
+    L13_2 = L2_2.identifier
+    L12_2["@identifier"] = L13_2
+    function L13_2(A0_3)
+      local L1_3, L2_3, L3_3, L4_3, L5_3, L6_3, L7_3, L8_3, L9_3, L10_3, L11_3, L12_3
+      L1_3 = #A0_3
+      if 0 == L1_3 then
+        L1_3 = MySQL
+        L1_3 = L1_3.Async
+        L1_3 = L1_3.execute
+        L2_3 = "INSERT INTO coffre_armeperm (identifier, armes, munitions, label, name) VALUES (@identifier, @armes, @munitions, @label, @name)"
+        L3_3 = {}
+        L4_3 = L2_2.identifier
+        L3_3["@identifier"] = L4_3
+        L4_3 = json
+        L4_3 = L4_3.encode
+        L5_3 = L3_2
+        L4_3 = L4_3(L5_3)
+        L3_3["@armes"] = L4_3
+        L4_3 = L5_2
+        L3_3["@munitions"] = L4_3
+        L4_3 = L6_2
+        L3_3["@label"] = L4_3
+        L4_3 = L7_2
+        L3_3["@name"] = L4_3
+        L1_3(L2_3, L3_3)
+        L1_3 = L2_2.removeWeapon
+        L2_3 = L3_2.name
+        L1_3(L2_3)
+        L1_3 = SendWebhookAtDiscord
+        L2_3 = ConfigSV
+        L2_3 = L2_3.DepositWeapon
+        L2_3 = L2_3.Nom
+        L3_3 = ConfigSV
+        L3_3 = L3_3.DepositWeapon
+        L3_3 = L3_3.Title
+        L4_3 = ConfigSV
+        L4_3 = L4_3.DepositWeapon
+        L4_3 = L4_3.Color
+        L5_3 = ConfigSV
+        L5_3 = L5_3.DepositWeapon
+        L5_3 = L5_3.Webhook
+        L6_3 = "[ __**"
+        L7_3 = L2_2.getName
+        L7_3 = L7_3()
+        L8_3 = " / "
+        L9_3 = GetPlayerName
+        L10_3 = L1_2
+        L9_3 = L9_3(L10_3)
+        L10_3 = "**__ ] **A d\195\169poser x1 "
+        L11_3 = L6_2
+        L12_3 = " dans le coffre arme perms**"
+        L6_3 = L6_3 .. L7_3 .. L8_3 .. L9_3 .. L10_3 .. L11_3 .. L12_3
+        L1_3(L2_3, L3_3, L4_3, L5_3, L6_3)
+      else
+        L1_3 = pairs
+        L2_3 = A0_3
+        L1_3, L2_3, L3_3, L4_3 = L1_3(L2_3)
+        for L5_3, L6_3 in L1_3, L2_3, L3_3, L4_3 do
+          L7_3 = L6_3.name
+          L8_3 = L3_2.name
+          if L7_3 ~= L8_3 then
+            L7_3 = L9_2
+            L7_3 = L7_3 + 1
+            L9_2 = L7_3
+          end
+        end
+        L1_3 = #A0_3
+        L2_3 = L9_2
+        if L1_3 > L2_3 then
+          L1_3 = TriggerClientEvent
+          L2_3 = Config
+          L2_3 = L2_3.TriggerNotification
+          L3_3 = L1_2
+          L4_3 = "Vous avez ~r~d\195\169j\195\160 cette arme~s~ dans le coffre."
+          L1_3(L2_3, L3_3, L4_3)
+        else
+          L1_3 = MySQL
+          L1_3 = L1_3.Async
+          L1_3 = L1_3.execute
+          L2_3 = "INSERT INTO coffre_armeperm (identifier, armes, munitions, label, name) VALUES (@identifier, @armes, @munitions, @label, @name)"
+          L3_3 = {}
+          L4_3 = L2_2.identifier
+          L3_3["@identifier"] = L4_3
+          L4_3 = json
+          L4_3 = L4_3.encode
+          L5_3 = L3_2
+          L4_3 = L4_3(L5_3)
+          L3_3["@armes"] = L4_3
+          L4_3 = L5_2
+          L3_3["@munitions"] = L4_3
+          L4_3 = L6_2
+          L3_3["@label"] = L4_3
+          L4_3 = L7_2
+          L3_3["@name"] = L4_3
+          L1_3(L2_3, L3_3)
+          L1_3 = L2_2.removeWeapon
+          L2_3 = L3_2.name
+          L1_3(L2_3)
+          L1_3 = SendWebhookAtDiscord
+          L2_3 = ConfigSV
+          L2_3 = L2_3.DepositWeapon
+          L2_3 = L2_3.Nom
+          L3_3 = ConfigSV
+          L3_3 = L3_3.DepositWeapon
+          L3_3 = L3_3.Title
+          L4_3 = ConfigSV
+          L4_3 = L4_3.DepositWeapon
+          L4_3 = L4_3.Color
+          L5_3 = ConfigSV
+          L5_3 = L5_3.DepositWeapon
+          L5_3 = L5_3.Webhook
+          L6_3 = "[ __**"
+          L7_3 = L2_2.getName
+          L7_3 = L7_3()
+          L8_3 = " / "
+          L9_3 = GetPlayerName
+          L10_3 = L1_2
+          L9_3 = L9_3(L10_3)
+          L10_3 = "**__ ] **A d\195\169poser x1 "
+          L11_3 = L6_2
+          L12_3 = " dans le coffre arme perms**"
+          L6_3 = L6_3 .. L7_3 .. L8_3 .. L9_3 .. L10_3 .. L11_3 .. L12_3
+          L1_3(L2_3, L3_3, L4_3, L5_3, L6_3)
+        end
+      end
+    end
+    L10_2(L11_2, L12_2, L13_2)
+  elseif "remove" == L4_2 then
+    L9_2 = L2_2.hasWeapon
+    L10_2 = L3_2.name
+    L9_2 = L9_2(L10_2)
+    if L9_2 then
+      L9_2 = TriggerClientEvent
+      L10_2 = Config
+      L10_2 = L10_2.TriggerNotification
+      L11_2 = L1_2
+      L12_2 = "Vous poss\195\169dez ~r~d\195\169j\195\160 cette arme~s~ sur vous."
+      L9_2(L10_2, L11_2, L12_2)
+    else
+      L9_2 = MySQL
+      L9_2 = L9_2.Async
+      L9_2 = L9_2.fetchAll
+      L10_2 = "SELECT * FROM coffre_armeperm WHERE identifier = @identifier"
+      L11_2 = {}
+      L12_2 = L2_2.identifier
+      L11_2["@identifier"] = L12_2
+      function L12_2(A0_3)
+        local L1_3, L2_3, L3_3, L4_3, L5_3, L6_3, L7_3, L8_3, L9_3, L10_3, L11_3, L12_3, L13_3, L14_3, L15_3, L16_3, L17_3, L18_3
+        L1_3 = pairs
+        L2_3 = A0_3
+        L1_3, L2_3, L3_3, L4_3 = L1_3(L2_3)
+        for L5_3, L6_3 in L1_3, L2_3, L3_3, L4_3 do
+          L7_3 = L6_3.name
+          L8_3 = L3_2.name
+          if L7_3 == L8_3 then
+            L7_3 = L2_2.addWeapon
+            L8_3 = L6_3.name
+            L9_3 = tonumber
+            L10_3 = L6_3.munitions
+            L9_3, L10_3, L11_3, L12_3, L13_3, L14_3, L15_3, L16_3, L17_3, L18_3 = L9_3(L10_3)
+            L7_3(L8_3, L9_3, L10_3, L11_3, L12_3, L13_3, L14_3, L15_3, L16_3, L17_3, L18_3)
+            L7_3 = json
+            L7_3 = L7_3.decode
+            L8_3 = L6_3.armes
+            L7_3 = L7_3(L8_3)
+            L7_3 = L7_3.components
+            if nil ~= L7_3 then
+              L7_3 = pairs
+              L8_3 = json
+              L8_3 = L8_3.decode
+              L9_3 = L6_3.armes
+              L8_3 = L8_3(L9_3)
+              L8_3 = L8_3.components
+              L7_3, L8_3, L9_3, L10_3 = L7_3(L8_3)
+              for L11_3, L12_3 in L7_3, L8_3, L9_3, L10_3 do
+                L13_3 = L2_2.addWeaponComponent
+                L14_3 = L6_3.name
+                L15_3 = L12_3
+                L13_3(L14_3, L15_3)
+              end
+            end
+            L7_3 = SendWebhookAtDiscord
+            L8_3 = ConfigSV
+            L8_3 = L8_3.RemoveWeapon
+            L8_3 = L8_3.Nom
+            L9_3 = ConfigSV
+            L9_3 = L9_3.RemoveWeapon
+            L9_3 = L9_3.Title
+            L10_3 = ConfigSV
+            L10_3 = L10_3.RemoveWeapon
+            L10_3 = L10_3.Color
+            L11_3 = ConfigSV
+            L11_3 = L11_3.RemoveWeapon
+            L11_3 = L11_3.Webhook
+            L12_3 = "[ __**"
+            L13_3 = L2_2.getName
+            L13_3 = L13_3()
+            L14_3 = " / "
+            L15_3 = GetPlayerName
+            L16_3 = L1_2
+            L15_3 = L15_3(L16_3)
+            L16_3 = "**__ ] **A retirer x1 "
+            L17_3 = L6_3.label
+            L18_3 = " dans le coffre arme perms**"
+            L12_3 = L12_3 .. L13_3 .. L14_3 .. L15_3 .. L16_3 .. L17_3 .. L18_3
+            L7_3(L8_3, L9_3, L10_3, L11_3, L12_3)
+            L7_3 = MySQL
+            L7_3 = L7_3.Async
+            L7_3 = L7_3.execute
+            L8_3 = "DELETE FROM coffre_armeperm WHERE identifier = @identifier AND armes = @armes AND id = @id AND name = @name AND munitions = @munitions"
+            L9_3 = {}
+            L10_3 = L2_2.identifier
+            L9_3["@identifier"] = L10_3
+            L10_3 = L6_3.armes
+            L9_3["@armes"] = L10_3
+            L10_3 = L6_3.id
+            L9_3["@id"] = L10_3
+            L10_3 = L6_3.munitions
+            L9_3["@munitions"] = L10_3
+            L10_3 = L6_3.name
+            L9_3["@name"] = L10_3
+            L7_3(L8_3, L9_3)
+          end
+        end
+      end
+      L9_2(L10_2, L11_2, L12_2)
+    end
+  end
+end
+L0_1(L1_1, L2_1)
+function L0_1(A0_2, A1_2, A2_2, A3_2, A4_2)
+  local L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2, L15_2, L16_2
+  if nil == A1_2 or "" == A1_2 then
+    L5_2 = false
+    return L5_2
+  end
+  L5_2 = os
+  L5_2 = L5_2.date
+  L6_2 = "*t"
+  L5_2 = L5_2(L6_2)
+  L6_2 = L5_2.day
+  if L6_2 < 10 then
+    L6_2 = "0"
+    L7_2 = tostring
+    L8_2 = L5_2.day
+    L7_2 = L7_2(L8_2)
+    L6_2 = L6_2 .. L7_2
+    L5_2.day = L6_2
+  end
+  L6_2 = L5_2.month
+  if L6_2 < 10 then
+    L6_2 = "0"
+    L7_2 = tostring
+    L8_2 = L5_2.month
+    L7_2 = L7_2(L8_2)
+    L6_2 = L6_2 .. L7_2
+    L5_2.month = L6_2
+  end
+  L6_2 = L5_2.hour
+  if L6_2 < 10 then
+    L6_2 = "0"
+    L7_2 = tostring
+    L8_2 = L5_2.hour
+    L7_2 = L7_2(L8_2)
+    L6_2 = L6_2 .. L7_2
+    L5_2.hour = L6_2
+  end
+  L6_2 = L5_2.min
+  if L6_2 < 10 then
+    L6_2 = "0"
+    L7_2 = tostring
+    L8_2 = L5_2.min
+    L7_2 = L7_2(L8_2)
+    L6_2 = L6_2 .. L7_2
+    L5_2.min = L6_2
+  end
+  L6_2 = L5_2.sec
+  if L6_2 < 10 then
+    L6_2 = "0"
+    L7_2 = tostring
+    L8_2 = L5_2.sec
+    L7_2 = L7_2(L8_2)
+    L6_2 = L6_2 .. L7_2
+    L5_2.sec = L6_2
+  end
+  L6_2 = {}
+  L7_2 = {}
+  L7_2.title = A1_2
+  L7_2.description = A4_2
+  L7_2.type = "rich"
+  L7_2.color = A2_2
+  L8_2 = {}
+  L9_2 = "%s/%s/%s \195\160 %sh%sm %ss"
+  L10_2 = L9_2
+  L9_2 = L9_2.format
+  L11_2 = L5_2.day
+  L12_2 = L5_2.month
+  L13_2 = L5_2.year
+  L14_2 = L5_2.hour
+  L15_2 = L5_2.min
+  L16_2 = L5_2.sec
+  L9_2 = L9_2(L10_2, L11_2, L12_2, L13_2, L14_2, L15_2, L16_2)
+  L8_2.text = L9_2
+  L7_2.footer = L8_2
+  L6_2[1] = L7_2
+  L7_2 = PerformHttpRequest
+  L8_2 = A3_2
+  function L9_2()
+    local L0_3, L1_3
+  end
+  L10_2 = "POST"
+  L11_2 = json
+  L11_2 = L11_2.encode
+  L12_2 = {}
+  L12_2.username = A0_2
+  L12_2.embeds = L6_2
+  L11_2 = L11_2(L12_2)
+  L12_2 = {}
+  L12_2["Content-Type"] = "application/json"
+  L7_2(L8_2, L9_2, L10_2, L11_2, L12_2)
+end
+SendWebhookAtDiscord = L0_1

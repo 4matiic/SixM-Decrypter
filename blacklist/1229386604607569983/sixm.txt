@@ -1,0 +1,523 @@
+local L0_1, L1_1, L2_1, L3_1
+L0_1 = {}
+disconnectedPlayers = L0_1
+function L0_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2
+  L3_2 = assert
+  L4_2 = type
+  L5_2 = A0_2
+  L4_2 = L4_2(L5_2)
+  L4_2 = "string" == L4_2
+  L3_2(L4_2)
+  L3_2 = type
+  L4_2 = A0_2
+  L3_2 = L3_2(L4_2)
+  if "string" == L3_2 then
+    L3_2 = GetHashKey
+    L4_2 = A0_2
+    L3_2 = L3_2(L4_2)
+    A0_2 = L3_2
+  end
+  L3_2 = CreatePed
+  L4_2 = 1
+  L5_2 = A0_2
+  L6_2 = A1_2
+  L7_2 = A2_2
+  L3_2 = L3_2(L4_2, L5_2, L6_2, L7_2)
+  while true do
+    L4_2 = DoesEntityExist
+    L5_2 = L3_2
+    L4_2 = L4_2(L5_2)
+    if L4_2 then
+      break
+    end
+    L4_2 = Wait
+    L5_2 = 0
+    L4_2(L5_2)
+  end
+  return L3_2
+end
+spawnPed = L0_1
+function L0_1()
+  local L0_2, L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2
+  L0_2 = source
+  L1_2 = GetPlayerIdentifierByType
+  L2_2 = L0_2
+  L3_2 = Config
+  L3_2 = L3_2.Identifier
+  L1_2 = L1_2(L2_2, L3_2)
+  if not L1_2 then
+    return
+  end
+  L2_2 = GetPlayerPed
+  L3_2 = L0_2
+  L2_2 = L2_2(L3_2)
+  if L2_2 then
+    L3_2 = spawnPed
+    L4_2 = GetEntityModel
+    L5_2 = L2_2
+    L4_2 = L4_2(L5_2)
+    L5_2 = GetEntityCoords
+    L6_2 = L2_2
+    L5_2 = L5_2(L6_2)
+    L6_2 = vec3
+    L7_2 = 0
+    L8_2 = 0
+    L9_2 = 1
+    L6_2 = L6_2(L7_2, L8_2, L9_2)
+    L5_2 = L5_2 - L6_2
+    L6_2 = GetEntityHeading
+    L7_2 = L2_2
+    L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2 = L6_2(L7_2)
+    L3_2 = L3_2(L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2)
+    L4_2 = FreezeEntityPosition
+    L5_2 = L3_2
+    L6_2 = true
+    L4_2(L5_2, L6_2)
+    L4_2 = disconnectedPlayers
+    L5_2 = {}
+    L5_2.identifier = L1_2
+    L6_2 = NetworkGetNetworkIdFromEntity
+    L7_2 = L3_2
+    L6_2 = L6_2(L7_2)
+    L5_2.ped = L6_2
+    L6_2 = Player
+    L7_2 = L0_2
+    L6_2 = L6_2(L7_2)
+    L6_2 = L6_2.state
+    L6_2 = L6_2.appearance
+    L5_2.appearance = L6_2
+    L5_2.loaded = false
+    L5_2.vehicle = nil
+    L5_2.seat = nil
+    L4_2[L1_2] = L5_2
+    L4_2 = NetworkGetNetworkIdFromEntity
+    L5_2 = GetVehiclePedIsIn
+    L6_2 = L2_2
+    L7_2 = false
+    L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2 = L5_2(L6_2, L7_2)
+    L4_2 = L4_2(L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2)
+    L5_2 = GetVehiclePedIsIn
+    L6_2 = L2_2
+    L7_2 = false
+    L5_2 = L5_2(L6_2, L7_2)
+    L6_2 = nil
+    if 0 ~= L4_2 then
+      L7_2 = nil
+      L8_2 = -1
+      L9_2 = 20
+      L10_2 = 1
+      for L11_2 = L8_2, L9_2, L10_2 do
+        L12_2 = GetPedInVehicleSeat
+        L13_2 = L5_2
+        L14_2 = L11_2
+        L12_2 = L12_2(L13_2, L14_2)
+        if L12_2 == L2_2 then
+          L7_2 = L11_2
+          break
+        end
+      end
+      L8_2 = TaskLeaveVehicle
+      L9_2 = L2_2
+      L10_2 = L5_2
+      L11_2 = 16
+      L8_2(L9_2, L10_2, L11_2)
+      L8_2 = Wait
+      L9_2 = 100
+      L8_2(L9_2)
+      L8_2 = SetPedIntoVehicle
+      L9_2 = L3_2
+      L10_2 = L5_2
+      L11_2 = L7_2
+      L8_2(L9_2, L10_2, L11_2)
+      L8_2 = disconnectedPlayers
+      L8_2 = L8_2[L1_2]
+      L8_2.vehicle = L4_2
+      L8_2 = disconnectedPlayers
+      L8_2 = L8_2[L1_2]
+      L8_2.seat = L7_2
+    end
+    L7_2 = TriggerClientEvent
+    L8_2 = "zSleep:addToLoadPlayer"
+    L9_2 = -1
+    L10_2 = disconnectedPlayers
+    L10_2 = L10_2[L1_2]
+    L7_2(L8_2, L9_2, L10_2)
+  end
+end
+onPlayerDropped = L0_1
+L0_1 = RegisterNetEvent
+L1_1 = "zSleep:disconnect"
+L2_1 = onPlayerDropped
+L0_1(L1_1, L2_1)
+L0_1 = AddEventHandler
+L1_1 = "playerDropped"
+L2_1 = onPlayerDropped
+L0_1(L1_1, L2_1)
+L0_1 = RegisterNetEvent
+L1_1 = "zSleep:loaded"
+function L2_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2
+  L1_2 = disconnectedPlayers
+  L1_2 = L1_2[A0_2]
+  L1_2.loaded = true
+  L1_2 = TriggerClientEvent
+  L2_2 = "zSleep:disableLoading"
+  L3_2 = -1
+  L4_2 = A0_2
+  L1_2(L2_2, L3_2, L4_2)
+end
+L0_1(L1_1, L2_1)
+function L0_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2, L14_2, L15_2, L16_2, L17_2, L18_2, L19_2, L20_2, L21_2
+  L1_2 = print
+  L2_2 = A0_2
+  L3_2 = "S4NA SHOP - ID"
+  L1_2(L2_2, L3_2)
+  L1_2 = source
+  if not L1_2 then
+    L1_2 = A0_2
+  end
+  L2_2 = GetPlayerIdentifierByType
+  L3_2 = L1_2
+  L4_2 = Config
+  L4_2 = L4_2.Identifier
+  L2_2 = L2_2(L3_2, L4_2)
+  L3_2 = disconnectedPlayers
+  L3_2 = L3_2[L2_2]
+  if L3_2 then
+    L3_2 = NetworkGetEntityFromNetworkId
+    L4_2 = disconnectedPlayers
+    L4_2 = L4_2[L2_2]
+    L4_2 = L4_2.ped
+    L3_2 = L3_2(L4_2)
+    while true do
+      L4_2 = GetPlayerPed
+      L5_2 = L1_2
+      L4_2 = L4_2(L5_2)
+      if 0 ~= L4_2 then
+        break
+      end
+      L4_2 = Wait
+      L5_2 = 100
+      L4_2(L5_2)
+    end
+    L4_2 = DoesEntityExist
+    L5_2 = L3_2
+    L4_2 = L4_2(L5_2)
+    if L4_2 then
+      L4_2 = GetEntityCoords
+      L5_2 = L3_2
+      L4_2 = L4_2(L5_2)
+      L5_2 = GetVehiclePedIsIn
+      L6_2 = L3_2
+      L7_2 = false
+      L5_2 = L5_2(L6_2, L7_2)
+      L6_2 = DeleteEntity
+      L7_2 = L3_2
+      L6_2(L7_2)
+      if L4_2 then
+        L6_2 = false
+        L7_2 = pairs
+        L8_2 = carriedPed
+        L7_2, L8_2, L9_2, L10_2 = L7_2(L8_2)
+        for L11_2, L12_2 in L7_2, L8_2, L9_2, L10_2 do
+          L13_2 = disconnectedPlayers
+          L13_2 = L13_2[L2_2]
+          L13_2 = L13_2.ped
+          if L12_2 == L13_2 then
+            L6_2 = true
+            L13_2 = carriedPed
+            L13_2[L11_2] = nil
+            L13_2 = Wait
+            L14_2 = 500
+            L13_2(L14_2)
+            L13_2 = SetEntityCoords
+            L14_2 = GetPlayerPed
+            L15_2 = L1_2
+            L14_2 = L14_2(L15_2)
+            L15_2 = L4_2.x
+            L16_2 = L4_2.y
+            L17_2 = L4_2.z
+            L18_2 = true
+            L19_2 = true
+            L20_2 = true
+            L21_2 = true
+            L13_2(L14_2, L15_2, L16_2, L17_2, L18_2, L19_2, L20_2, L21_2)
+            L13_2 = Wait
+            L14_2 = 5000
+            L13_2(L14_2)
+            L13_2 = TriggerClientEvent
+            L14_2 = "zSleep:syncStopCarry"
+            L15_2 = L11_2
+            L13_2(L14_2, L15_2)
+            L13_2 = TriggerClientEvent
+            L14_2 = "zSleep:startForceCarry"
+            L15_2 = L11_2
+            L16_2 = L1_2
+            L13_2(L14_2, L15_2, L16_2)
+          end
+        end
+        if not L6_2 then
+          L7_2 = disconnectedPlayers
+          L7_2 = L7_2[L2_2]
+          L7_2 = L7_2.vehicle
+          L8_2 = disconnectedPlayers
+          L8_2 = L8_2[L2_2]
+          L8_2 = L8_2.seat
+          L9_2 = TriggerClientEvent
+          L10_2 = "zSleep:setPlayerCoords"
+          L11_2 = L1_2
+          L12_2 = L4_2
+          L13_2 = L7_2
+          L14_2 = L8_2
+          L9_2(L10_2, L11_2, L12_2, L13_2, L14_2)
+          L9_2 = Wait
+          L10_2 = 500
+          L9_2(L10_2)
+          if 0 ~= L7_2 and L5_2 then
+            while true do
+              L9_2 = GetVehiclePedIsIn
+              L10_2 = GetPlayerPed
+              L11_2 = L1_2
+              L10_2 = L10_2(L11_2)
+              L11_2 = false
+              L9_2 = L9_2(L10_2, L11_2)
+              L10_2 = NetworkGetEntityFromNetworkId
+              L11_2 = L7_2
+              L10_2 = L10_2(L11_2)
+              if L9_2 == L10_2 then
+                break
+              end
+              L9_2 = Wait
+              L10_2 = 100
+              L9_2(L10_2)
+              L9_2 = SetPedIntoVehicle
+              L10_2 = GetPlayerPed
+              L11_2 = L1_2
+              L10_2 = L10_2(L11_2)
+              L11_2 = NetworkGetEntityFromNetworkId
+              L12_2 = L7_2
+              L11_2 = L11_2(L12_2)
+              L12_2 = L8_2
+              L9_2(L10_2, L11_2, L12_2)
+            end
+          end
+        end
+      end
+    end
+    L4_2 = TriggerClientEvent
+    L5_2 = "zSleep:deletePed"
+    L6_2 = -1
+    L7_2 = L2_2
+    L4_2(L5_2, L6_2, L7_2)
+    L4_2 = disconnectedPlayers
+    L4_2[L2_2] = nil
+  end
+  L3_2 = Player
+  L4_2 = L1_2
+  L3_2 = L3_2(L4_2)
+  L3_2 = L3_2.state
+  L4_2 = L3_2
+  L3_2 = L3_2.set
+  L5_2 = "appearance"
+  L6_2 = {}
+  L7_2 = true
+  L3_2(L4_2, L5_2, L6_2, L7_2)
+  L3_2 = pairs
+  L4_2 = disconnectedPlayers
+  L3_2, L4_2, L5_2, L6_2 = L3_2(L4_2)
+  for L7_2, L8_2 in L3_2, L4_2, L5_2, L6_2 do
+    L9_2 = L8_2.loaded
+    if not L9_2 then
+      L9_2 = TriggerClientEvent
+      L10_2 = "zSleep:addToLoadPlayer"
+      L11_2 = L1_2
+      L12_2 = L8_2
+      L9_2(L10_2, L11_2, L12_2)
+    end
+  end
+end
+L1_1 = Config
+L1_1 = L1_1.RespawnEvent
+if not L1_1 then
+  L1_1 = AddEventHandler
+  L2_1 = "playerJoining"
+  L3_1 = L0_1
+  L1_1(L2_1, L3_1)
+else
+  L1_1 = RegisterNetEvent
+  L2_1 = Config
+  L2_1 = L2_1.RespawnEvent
+  L3_1 = L0_1
+  L1_1(L2_1, L3_1)
+end
+L1_1 = AddEventHandler
+L2_1 = "onResourceStop"
+function L3_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2, L12_2, L13_2
+  L1_2 = GetCurrentResourceName
+  L1_2 = L1_2()
+  if L1_2 ~= A0_2 then
+    return
+  end
+  L1_2 = pairs
+  L2_2 = disconnectedPlayers
+  L1_2, L2_2, L3_2, L4_2 = L1_2(L2_2)
+  for L5_2, L6_2 in L1_2, L2_2, L3_2, L4_2 do
+    L7_2 = NetworkGetEntityFromNetworkId
+    L8_2 = L6_2.ped
+    L7_2 = L7_2(L8_2)
+    L8_2 = GetEntityCoords
+    L9_2 = L7_2
+    L8_2 = L8_2(L9_2)
+    L9_2 = vec3
+    L10_2 = 0
+    L11_2 = 0
+    L12_2 = 1
+    L9_2 = L9_2(L10_2, L11_2, L12_2)
+    L8_2 = L8_2 - L9_2
+    L9_2 = MySQL
+    L9_2 = L9_2.Async
+    L9_2 = L9_2.execute
+    L10_2 = "REPLACE INTO player_disconnect_data (identifier, ped_model, appearance, pos_x, pos_y, pos_z, pos_h) VALUES (@identifier, @ped_model, @appearance, @pos_x, @pos_y, @pos_z, @pos_h)"
+    L11_2 = {}
+    L11_2["@identifier"] = L5_2
+    L12_2 = GetEntityModel
+    L13_2 = L7_2
+    L12_2 = L12_2(L13_2)
+    L11_2["@ped_model"] = L12_2
+    L12_2 = json
+    L12_2 = L12_2.encode
+    L13_2 = L6_2.appearance
+    L12_2 = L12_2(L13_2)
+    L11_2["@appearance"] = L12_2
+    L12_2 = L8_2.x
+    L11_2["@pos_x"] = L12_2
+    L12_2 = L8_2.y
+    L11_2["@pos_y"] = L12_2
+    L12_2 = L8_2.z
+    L11_2["@pos_z"] = L12_2
+    L12_2 = GetEntityHeading
+    L13_2 = L7_2
+    L12_2 = L12_2(L13_2)
+    L11_2["@pos_h"] = L12_2
+    L9_2(L10_2, L11_2)
+  end
+end
+L1_1(L2_1, L3_1)
+L1_1 = AddEventHandler
+L2_1 = "onResourceStart"
+function L3_1(A0_2)
+  local L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2
+  L1_2 = GetCurrentResourceName
+  L1_2 = L1_2()
+  if L1_2 ~= A0_2 then
+    return
+  end
+  L1_2 = MySQL
+  L1_2 = L1_2.Async
+  L1_2 = L1_2.fetchAll
+  L2_2 = "SELECT * FROM player_disconnect_data"
+  L3_2 = {}
+  function L4_2(A0_3)
+    local L1_3, L2_3, L3_3, L4_3, L5_3, L6_3, L7_3, L8_3, L9_3, L10_3, L11_3, L12_3
+    L1_3 = ipairs
+    L2_3 = A0_3
+    L1_3, L2_3, L3_3, L4_3 = L1_3(L2_3)
+    for L5_3, L6_3 in L1_3, L2_3, L3_3, L4_3 do
+      L7_3 = spawnPed
+      L8_3 = L6_3.ped_model
+      L9_3 = vec3
+      L10_3 = L6_3.pos_x
+      L11_3 = L6_3.pos_y
+      L12_3 = L6_3.pos_z
+      L9_3 = L9_3(L10_3, L11_3, L12_3)
+      L10_3 = L6_3.pos_h
+      L7_3 = L7_3(L8_3, L9_3, L10_3)
+      L8_3 = FreezeEntityPosition
+      L9_3 = L7_3
+      L10_3 = true
+      L8_3(L9_3, L10_3)
+      L8_3 = disconnectedPlayers
+      L9_3 = L6_3.identifier
+      L10_3 = {}
+      L11_3 = L6_3.identifier
+      L10_3.identifier = L11_3
+      L11_3 = NetworkGetNetworkIdFromEntity
+      L12_3 = L7_3
+      L11_3 = L11_3(L12_3)
+      L10_3.ped = L11_3
+      L11_3 = L6_3.appearance
+      L10_3.appearance = L11_3
+      L10_3.loaded = false
+      L8_3[L9_3] = L10_3
+      L8_3 = TriggerClientEvent
+      L9_3 = "zSleep:addToLoadPlayer"
+      L10_3 = -1
+      L11_3 = disconnectedPlayers
+      L12_3 = L6_3.identifier
+      L11_3 = L11_3[L12_3]
+      L8_3(L9_3, L10_3, L11_3)
+    end
+  end
+  L1_2(L2_2, L3_2, L4_2)
+  L1_2 = ipairs
+  L2_2 = GetPlayers
+  L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2 = L2_2()
+  L1_2, L2_2, L3_2, L4_2 = L1_2(L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2)
+  for L5_2, L6_2 in L1_2, L2_2, L3_2, L4_2 do
+    L7_2 = Player
+    L8_2 = L6_2
+    L7_2 = L7_2(L8_2)
+    L7_2 = L7_2.state
+    L8_2 = L7_2
+    L7_2 = L7_2.set
+    L9_2 = "appearance"
+    L10_2 = {}
+    L11_2 = true
+    L7_2(L8_2, L9_2, L10_2, L11_2)
+  end
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterNetEvent
+L2_1 = "zSleep:GetAllPeds"
+function L3_1()
+  local L0_2, L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2
+  L0_2 = pairs
+  L1_2 = disconnectedPlayers
+  L0_2, L1_2, L2_2, L3_2 = L0_2(L1_2)
+  for L4_2, L5_2 in L0_2, L1_2, L2_2, L3_2 do
+    L6_2 = TriggerClientEvent
+    L7_2 = "zSleep:addToLoadPlayer"
+    L8_2 = source
+    L9_2 = disconnectedPlayers
+    L10_2 = L5_2.identifier
+    L9_2 = L9_2[L10_2]
+    L6_2(L7_2, L8_2, L9_2)
+  end
+end
+L1_1(L2_1, L3_1)
+L1_1 = RegisterServerCallback
+L2_1 = "zSleep:GetPedIsCarried"
+function L3_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2
+  L3_2 = false
+  L4_2 = pairs
+  L5_2 = carriedPed
+  L4_2, L5_2, L6_2, L7_2 = L4_2(L5_2)
+  for L8_2, L9_2 in L4_2, L5_2, L6_2, L7_2 do
+    L10_2 = disconnectedPlayers
+    L10_2 = L10_2[A2_2]
+    L10_2 = L10_2.ped
+    if L9_2 == L10_2 then
+      L10_2 = A1_2
+      L11_2 = true
+      L10_2(L11_2)
+    end
+  end
+  L4_2 = A1_2
+  L5_2 = L3_2
+  L4_2(L5_2)
+end
+L1_1(L2_1, L3_1)

@@ -1,0 +1,330 @@
+local L0_1, L1_1
+function L0_1()
+  local L0_2, L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2
+  L0_2 = os
+  L0_2 = L0_2.date
+  L1_2 = "*t"
+  L0_2 = L0_2(L1_2)
+  L1_2 = L0_2.day
+  if L1_2 < 10 then
+    L1_2 = "0"
+    L2_2 = tostring
+    L3_2 = L0_2.day
+    L2_2 = L2_2(L3_2)
+    L1_2 = L1_2 .. L2_2
+    L0_2.day = L1_2
+  end
+  L1_2 = L0_2.month
+  if L1_2 < 10 then
+    L1_2 = "0"
+    L2_2 = tostring
+    L3_2 = L0_2.month
+    L2_2 = L2_2(L3_2)
+    L1_2 = L1_2 .. L2_2
+    L0_2.month = L1_2
+  end
+  L1_2 = L0_2.hour
+  if L1_2 < 10 then
+    L1_2 = "0"
+    L2_2 = tostring
+    L3_2 = L0_2.hour
+    L2_2 = L2_2(L3_2)
+    L1_2 = L1_2 .. L2_2
+    L0_2.hour = L1_2
+  end
+  L1_2 = L0_2.min
+  if L1_2 < 10 then
+    L1_2 = "0"
+    L2_2 = tostring
+    L3_2 = L0_2.min
+    L2_2 = L2_2(L3_2)
+    L1_2 = L1_2 .. L2_2
+    L0_2.min = L1_2
+  end
+  L1_2 = L0_2.sec
+  if L1_2 < 10 then
+    L1_2 = "0"
+    L2_2 = tostring
+    L3_2 = L0_2.sec
+    L2_2 = L2_2(L3_2)
+    L1_2 = L1_2 .. L2_2
+    L0_2.sec = L1_2
+  end
+  L1_2 = Config
+  L1_2 = L1_2.ServeurNom
+  L2_2 = "  \227\131\187  "
+  L3_2 = L0_2.day
+  L4_2 = "/"
+  L5_2 = L0_2.month
+  L6_2 = "/"
+  L7_2 = L0_2.year
+  L8_2 = ""
+  L1_2 = L1_2 .. L2_2 .. L3_2 .. L4_2 .. L5_2 .. L6_2 .. L7_2 .. L8_2
+  return L1_2
+end
+GetTime = L0_1
+function L0_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2
+  L3_2 = {}
+  L4_2 = {}
+  L4_2.color = A0_2
+  L5_2 = {}
+  L6_2 = Config
+  L6_2 = L6_2.ServeurNom
+  L5_2.name = L6_2
+  L6_2 = Config
+  L6_2 = L6_2.Logo
+  L5_2.icon_url = L6_2
+  L4_2.author = L5_2
+  L4_2.description = A1_2
+  L5_2 = {}
+  L6_2 = GetTime
+  L6_2 = L6_2()
+  L5_2.text = L6_2
+  L6_2 = Config
+  L6_2 = L6_2.Logo
+  L5_2.icon_url = L6_2
+  L4_2.footer = L5_2
+  L3_2[1] = L4_2
+  L4_2 = PerformHttpRequest
+  L5_2 = A2_2
+  function L6_2()
+    local L0_3, L1_3
+  end
+  L7_2 = "POST"
+  L8_2 = json
+  L8_2 = L8_2.encode
+  L9_2 = {}
+  L9_2.username = nil
+  L9_2.embeds = L3_2
+  L8_2 = L8_2(L9_2)
+  L9_2 = {}
+  L9_2["Content-Type"] = "application/json"
+  L4_2(L5_2, L6_2, L7_2, L8_2, L9_2)
+end
+Logs = L0_1
+function L0_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2
+  L3_2 = nil
+  L4_2 = PerformHttpRequest
+  L5_2 = "https://discordapp.com/api/"
+  L6_2 = A1_2
+  L5_2 = L5_2 .. L6_2
+  function L6_2(A0_3, A1_3, A2_3)
+    local L3_3
+    L3_3 = {}
+    L3_3.data = A1_3
+    L3_3.code = A0_3
+    L3_3.headers = A2_3
+    L3_2 = L3_3
+  end
+  L7_2 = A0_2
+  L8_2 = #A2_2
+  if L8_2 > 0 then
+    L8_2 = json
+    L8_2 = L8_2.encode
+    L9_2 = A2_2
+    L8_2 = L8_2(L9_2)
+    if L8_2 then
+      goto lbl_18
+    end
+  end
+  L8_2 = ""
+  ::lbl_18::
+  L9_2 = {}
+  L9_2["Content-Type"] = "application/json"
+  L10_2 = "Bot "
+  L11_2 = ConfigBotWarning
+  L11_2 = L11_2.BotToken
+  L10_2 = L10_2 .. L11_2
+  L9_2.Authorization = L10_2
+  L4_2(L5_2, L6_2, L7_2, L8_2, L9_2)
+  while nil == L3_2 do
+    L4_2 = Citizen
+    L4_2 = L4_2.Wait
+    L5_2 = 0
+    L4_2(L5_2)
+  end
+  return L3_2
+end
+DiscordRequest = L0_1
+function L0_1(A0_2, A1_2, A2_2)
+  local L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2, L11_2
+  L3_2 = nil
+  L4_2 = PerformHttpRequest
+  L5_2 = "https://discordapp.com/api/"
+  L6_2 = A1_2
+  L5_2 = L5_2 .. L6_2
+  function L6_2(A0_3, A1_3, A2_3)
+    local L3_3
+    L3_3 = {}
+    L3_3.data = A1_3
+    L3_3.code = A0_3
+    L3_3.headers = A2_3
+    L3_2 = L3_3
+  end
+  L7_2 = A0_2
+  L8_2 = #A2_2
+  if L8_2 > 0 then
+    L8_2 = json
+    L8_2 = L8_2.encode
+    L9_2 = A2_2
+    L8_2 = L8_2(L9_2)
+    if L8_2 then
+      goto lbl_18
+    end
+  end
+  L8_2 = ""
+  ::lbl_18::
+  L9_2 = {}
+  L9_2["Content-Type"] = "application/json"
+  L10_2 = "Bot "
+  L11_2 = ConfigBotWarning
+  L11_2 = L11_2.BotToken
+  L10_2 = L10_2 .. L11_2
+  L9_2.Authorization = L10_2
+  L4_2(L5_2, L6_2, L7_2, L8_2, L9_2)
+  while nil == L3_2 do
+    L4_2 = Citizen
+    L4_2 = L4_2.Wait
+    L5_2 = 0
+    L4_2(L5_2)
+  end
+  return L3_2
+end
+MessageRequest = L0_1
+L0_1 = string
+function L1_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2
+  L2_2 = string
+  L2_2 = L2_2.sub
+  L3_2 = A0_2
+  L4_2 = 1
+  L5_2 = string
+  L5_2 = L5_2.len
+  L6_2 = A1_2
+  L5_2, L6_2 = L5_2(L6_2)
+  L2_2 = L2_2(L3_2, L4_2, L5_2, L6_2)
+  L2_2 = L2_2 == A1_2
+  return L2_2
+end
+L0_1.starts = L1_1
+function L0_1(A0_2, A1_2)
+  local L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2, L9_2, L10_2
+  if nil == A1_2 then
+    A1_2 = "%s"
+  end
+  L2_2 = {}
+  L3_2 = string
+  L3_2 = L3_2.gmatch
+  L4_2 = A0_2
+  L5_2 = "([^"
+  L6_2 = A1_2
+  L7_2 = "]+)"
+  L5_2 = L5_2 .. L6_2 .. L7_2
+  L3_2, L4_2, L5_2, L6_2 = L3_2(L4_2, L5_2)
+  for L7_2 in L3_2, L4_2, L5_2, L6_2 do
+    L8_2 = table
+    L8_2 = L8_2.insert
+    L9_2 = L2_2
+    L10_2 = L7_2
+    L8_2(L9_2, L10_2)
+  end
+  return L2_2
+end
+split = L0_1
+L0_1 = Citizen
+L0_1 = L0_1.CreateThread
+function L1_1()
+  local L0_2, L1_2, L2_2, L3_2, L4_2, L5_2, L6_2, L7_2, L8_2
+  while true do
+    L0_2 = DiscordRequest
+    L1_2 = "GET"
+    L2_2 = "channels/"
+    L3_2 = Config
+    L3_2 = L3_2.ChannelID
+    L2_2 = L2_2 .. L3_2
+    L3_2 = {}
+    L0_2 = L0_2(L1_2, L2_2, L3_2)
+    L1_2 = L0_2.data
+    if L1_2 then
+      L1_2 = json
+      L1_2 = L1_2.decode
+      L2_2 = L0_2.data
+      L1_2 = L1_2(L2_2)
+      L2_2 = L1_2.last_message_id
+      L3_2 = MessageRequest
+      L4_2 = "GET"
+      L5_2 = "channels/"
+      L6_2 = Config
+      L6_2 = L6_2.ChannelID
+      L7_2 = "/messages/"
+      L8_2 = L2_2
+      L5_2 = L5_2 .. L6_2 .. L7_2 .. L8_2
+      L6_2 = {}
+      L3_2 = L3_2(L4_2, L5_2, L6_2)
+      L4_2 = L3_2.data
+      if L4_2 then
+        L4_2 = json
+        L4_2 = L4_2.decode
+        L5_2 = L3_2.data
+        L4_2 = L4_2(L5_2)
+        L5_2 = lastdata
+        if nil == L5_2 then
+          L5_2 = L4_2.id
+          lastdata = L5_2
+        end
+        L5_2 = lastdata
+        L6_2 = L4_2.id
+        if L5_2 ~= L6_2 then
+          L5_2 = L4_2.author
+          L5_2 = L5_2.username
+          L6_2 = Config
+          L6_2 = L6_2.BotName
+          if L5_2 ~= L6_2 then
+            L5_2 = CommandeExecuter
+            L6_2 = L4_2.content
+            L5_2(L6_2)
+            L5_2 = L4_2.id
+            lastdata = L5_2
+          end
+        end
+      else
+        L4_2 = print
+        L5_2 = "\226\134\146 ^1ERROR^7 \226\134\144"
+        L4_2(L5_2)
+        L4_2 = print
+        L5_2 = "Erreur: unknow \"lastmessage.data\" (STEP 2)"
+        L4_2(L5_2)
+        L4_2 = print
+        L5_2 = "Report the error : ^4discord.gg/freetz^7"
+        L4_2(L5_2)
+        L4_2 = print
+        L5_2 = "\226\134\146 ^1ERROR^7 \226\134\144"
+        L4_2(L5_2)
+      end
+    else
+      L1_2 = print
+      L2_2 = "\226\134\146 ^1ERROR^7 \226\134\144"
+      L1_2(L2_2)
+      L1_2 = print
+      L2_2 = "Erreur: unknow \"chanel.data\" (STEP 1)"
+      L1_2(L2_2)
+      L1_2 = print
+      L2_2 = "Report the error : ^4discord.gg/freetz^7"
+      L1_2(L2_2)
+      L1_2 = print
+      L2_2 = "\226\134\146 ^1ERROR^7 \226\134\144"
+      L1_2(L2_2)
+      L1_2 = print
+      L2_2 = L0_2
+      L1_2(L2_2)
+    end
+    L1_2 = Citizen
+    L1_2 = L1_2.Wait
+    L2_2 = Config
+    L2_2 = L2_2.Cooldown
+    L1_2(L2_2)
+  end
+end
+L0_1(L1_1)

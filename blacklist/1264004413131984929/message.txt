@@ -1,0 +1,103 @@
+ESX.RegisterServerCallback("ArmePermCoffre:ReceiveWeapon", function(source, cb)
+    local player = ESX.GetPlayerFromId(source)
+    local weapons = {}
+
+    MySQL.Async.fetchAll("SELECT * FROM coffre_armeperm WHERE identifier = @identifier", {
+        ["@identifier"] = player.identifier
+    }, function(result)
+        for _, weapon in pairs(result) do
+            table.insert(weapons, weapon)
+        end
+        -- Renvoie directement les armes actualisées et les armes du joueur
+        cb({ data1 = weapons, data2 = player.loadout })
+    end)
+end)
+
+RegisterServerEvent("ArmePermCoffre:depositarmesperm")
+AddEventHandler("ArmePermCoffre:depositarmesperm", function(data)
+    local source = source
+    local player = ESX.GetPlayerFromId(source)
+    
+    if data.action == "deposit" then
+        MySQL.Async.fetchAll("SELECT * FROM coffre_armeperm WHERE identifier = @identifier", {
+            ["@identifier"] = player.identifier
+        }, function(result)
+            for _, weapon in pairs(result) do
+                if weapon.name == data.arme.name then
+                    TriggerClientEvent(Config.TriggerNotification, source, "Vous avez ~r~déjà cette arme~s~ dans le coffre.")
+                    return
+                end
+            end
+            
+            MySQL.Async.execute("INSERT INTO coffre_armeperm (identifier, armes, munitions, label, name) VALUES (@identifier, @armes, @munitions, @label, @name)", {
+                ["@identifier"] = player.identifier,
+                ["@armes"] = json.encode(data.arme),
+                ["@munitions"] = data.Ammo,
+                ["@label"] = data.Label,
+                ["@name"] = data.Name
+            })
+            
+            player.removeWeapon(data.arme.name)
+            
+            -- Renvoie la liste mise à jour des armes au client
+            MySQL.Async.fetchAll("SELECT * FROM coffre_armeperm WHERE identifier = @identifier", {
+                ["@identifier"] = player.identifier
+            }, function(result)
+                local updatedWeapons = {}
+                for _, weapon in pairs(result) do
+                    table.insert(updatedWeapons, weapon)
+                end
+                -- Renvoie la liste mise à jour des armes au client
+                TriggerClientEvent("ArmePermCoffre:UpdateWeapons", source, updatedWeapons)
+            end)
+
+            SendWebhookAtDiscord(ConfigSV.DepositWeapon.Nom, ConfigSV.DepositWeapon.Title, ConfigSV.DepositWeapon.Color, ConfigSV.DepositWeapon.Webhook, 
+                string.format("[ __**%s / %s**__ ] **A déposé x1 %s dans le coffre arme perms**", player.getName(), GetPlayerName(source), data.Label))
+        end)
+
+    elseif data.action == "remove" then
+        if player.hasWeapon(data.arme.name) then
+            TriggerClientEvent(Config.TriggerNotification, source, "Vous possédez ~r~déjà cette arme~s~ sur vous.")
+            return
+        end
+
+        MySQL.Async.fetchAll("SELECT * FROM coffre_armeperm WHERE identifier = @identifier", {
+            ["@identifier"] = player.identifier
+        }, function(result)
+            for _, weapon in pairs(result) do
+                if weapon.name == data.arme.name then
+                    player.addWeapon(weapon.name, tonumber(weapon.munitions))
+
+                    local components = json.decode(weapon.armes).components
+                    if components then
+                        for _, comp in pairs(components) do
+                            player.addWeaponComponent(weapon.name, comp)
+                        end
+                    end
+
+                    -- Supprimer l'arme de la base de données après l'avoir retirée du coffre
+                    MySQL.Async.execute("DELETE FROM coffre_armeperm WHERE identifier = @identifier AND name = @name LIMIT 1", {
+                        ["@identifier"] = player.identifier,
+                        ["@name"] = data.arme.name
+                    })
+
+                    -- Renvoie la liste mise à jour des armes au client
+                    MySQL.Async.fetchAll("SELECT * FROM coffre_armeperm WHERE identifier = @identifier", {
+                        ["@identifier"] = player.identifier
+                    }, function(result)
+                        local updatedWeapons = {}
+                        for _, weapon in pairs(result) do
+                            table.insert(updatedWeapons, weapon)
+                        end
+                        -- Renvoie la liste mise à jour des armes au client
+                        TriggerClientEvent("ArmePermCoffre:UpdateWeapons", source, updatedWeapons)
+                    end)
+
+                    SendWebhookAtDiscord(ConfigSV.RemoveWeapon.Nom, ConfigSV.RemoveWeapon.Title, ConfigSV.RemoveWeapon.Color, ConfigSV.RemoveWeapon.Webhook, 
+                        string.format("[ __**%s / %s**__ ] **A retiré x1 %s du coffre arme perms**", player.getName(), GetPlayerName(source), data.Label))
+                    return
+                end
+            end
+        end)
+    end
+end)
